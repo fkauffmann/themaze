@@ -18,6 +18,7 @@ Extra code and artwork by fabrice.kauffmann@gmail.com
 * 2024.07.25 - more sounds added
 * 2024.07.27 - bonus timme added
 * 2024.07.31 - monster added
+* 2024.08.06 - fixed check of map boundaries
 
 ## Requirements
 
