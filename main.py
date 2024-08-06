@@ -38,6 +38,7 @@ from monster import Monster
 from bomb import Bomb
 from labyrinth import Labyrinth
 from item import Item
+from particles import Particle, ParticleSystem
 
 # game parameters
 DEBUG = False
@@ -51,6 +52,7 @@ MAX_ITEMS = 10
 LEVEL_ITEMS = MAX_ITEMS
 TILE_SIZE = 64
 BACKGROUND_COLOR = (200, 200, 200)
+MAX_PARTICLES = 200
 
 # create empty map
 labyrinth_array = np.zeros((MAP_HEIGHT, MAP_WIDTH))
@@ -71,13 +73,13 @@ def count_maps():
 # load map from random file
 def read_map(array, num_maps):
     idx = random.randint(1,num_maps)
+    idx = 14
     mapFile = open("./maps/" + str(idx) + ".txt", 'r')
     print("Reading map: " + mapFile.name)
     lines = mapFile.readlines()
     row = 0
     for line in lines:
-        line = line.strip()
-        for x in range(0, len(line)):
+        for x in range(0, MAP_WIDTH):
             if line[x]=='X':
                 array[row][x]=1
             else:
@@ -118,6 +120,7 @@ def run():
     global TILE_SIZE
     global BACKGROUND_COLOR
     global SCORE
+    global MAX_PARTICLES
 
     global labyrinth_array
     global sprites_group
@@ -174,6 +177,16 @@ def run():
 
     # trigger clock event every 100ms
     pygame.time.set_timer(clock_event, 100)
+
+    # Create particle system for dust effect
+    particle_system = ParticleSystem(screen.get_width(), screen.get_height())
+
+    # Generate random particles
+    for p in range(0,MAX_PARTICLES):
+        particle_x = random.randint(0, screen.get_width())
+        particle_y = random.randint(0, screen.get_height())
+        particle_system.add_particle(particle_x, particle_y, 3)
+
 
     # main game loop
     while running:
@@ -265,8 +278,7 @@ def run():
 
         # check if item is collected
         if pygame.sprite.spritecollide(player, item_group, True):
-            gamecoin_sound.play()
-        
+            gamecoin_sound.play()        
 
         # no more items ==> YOU WIN
         if len(item_group) == 0 and countdown > 0:
@@ -284,6 +296,10 @@ def run():
             if not mute_sound:
                 gameover_sound.play()
                 mute_sound = True
+
+        # Update particles
+        particle_system.update()
+        particle_system.draw(screen)
 
         # show the timer
         game_font_chrono.render_to(screen, (10,15), f"TIME: {countdown_display}", (255,255,0)) 
