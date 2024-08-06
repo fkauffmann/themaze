@@ -13,6 +13,7 @@
 # 2024.07.25 - more sounds added
 # 2024.07.27 - bonus timme added
 # 2024.07.31 - monster added
+# 2024.08.06 - fixed check of map boundaries
 #
 # To Do:
 # - check if no more space available to spawn objects ✔️
@@ -41,6 +42,8 @@ from item import Item
 # game parameters
 DEBUG = False
 NUM_MAPS = 1
+MAP_HEIGHT = 11
+MAP_WIDTH = 20
 SCORE = 0
 MAX_TIME = 6100
 LEVEL_TIME = MAX_TIME
@@ -50,7 +53,7 @@ TILE_SIZE = 64
 BACKGROUND_COLOR = (200, 200, 200)
 
 # create empty map
-labyrinth_array = np.zeros((11,20))
+labyrinth_array = np.zeros((MAP_HEIGHT, MAP_WIDTH))
 
 # create global sprites groups
 sprites_group = pygame.sprite.Group()
@@ -202,7 +205,7 @@ def run():
         elif keys[pygame.K_RIGHT]:
             if countdown>0 and len(item_group)>0:
                 player.move_right(TILE_SIZE)
-        elif keys[pygame.K_RETURN]:
+        elif keys[pygame.K_x]:
             if not monster.killed:
                 bomb.exploded = False
                 bomb.rect.x = player.rect.x
@@ -228,6 +231,10 @@ def run():
                 labyrinth_background = draw_maze(screen, player, monster)
                 mute_sound = False
 
+        # check map boundaries
+        if player.rect.x/64 < 0 or player.rect.x/64>=MAP_WIDTH or player.rect.y/64 < 0 or player.rect.y/64>=MAP_HEIGHT:
+            player.move_rewind(TILE_SIZE)    
+        
         # check collisions with walls
         if labyrinth_array[int(player.rect.y/64)][int(player.rect.x/64)] == 1:
             player.move_rewind(TILE_SIZE)
@@ -283,6 +290,9 @@ def run():
 
         # show the score
         game_font_chrono.render_to(screen, (10,655), f"SCORE: {SCORE}", (255,255,0)) 
+
+        # show keys
+        game_font_chrono.render_to(screen, (965,655), "X=DROP BOMB", (255,255,0))
 
         pygame.display.flip()
 
