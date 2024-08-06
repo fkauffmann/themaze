@@ -73,7 +73,6 @@ def count_maps():
 # load map from random file
 def read_map(array, num_maps):
     idx = random.randint(1,num_maps)
-    idx = 14
     mapFile = open("./maps/" + str(idx) + ".txt", 'r')
     print("Reading map: " + mapFile.name)
     lines = mapFile.readlines()
