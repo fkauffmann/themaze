@@ -3,9 +3,10 @@ Another tiny 2D game made with python and pygame.
 
 Inspired by a tutorial from Franck Dubois, published in "Programmez! Magazine Hors Serie 15"
 
-Extra code and artwork by fabrice.kauffmann@gmail.com
+Extra code, maps and artwork by fabrice.kauffmann@gmail.com
 
 <img src="screenshot.png">
+<img src="particles.png">
 
 ## History
 
@@ -19,6 +20,8 @@ Extra code and artwork by fabrice.kauffmann@gmail.com
 * 2024.07.27 - bonus timme added
 * 2024.07.31 - monster added
 * 2024.08.06 - fixed check of map boundaries
+* 2024.08.07 - basic particles generator added
+* 2024.08.07 - save high score
 
 ## Requirements
 
@@ -38,3 +41,18 @@ pip install pygame
 pip install numpy
 python3 main.py
 ```
+
+## Setup (Windows)
+
+Navigate to project folder 
+```
+python -m venv .venv
+cd .venv
+cd scripts
+activate
+cd ..\..
+pip install pygame
+pip install numpy
+python main.py
+```
+
