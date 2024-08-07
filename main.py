@@ -14,6 +14,8 @@
 # 2024.07.27 - bonus timme added
 # 2024.07.31 - monster added
 # 2024.08.06 - fixed check of map boundaries
+# 2024.08.06 - added basic particles generator
+# 2024.08.07 - high score saved in highscore.txt
 #
 # To Do:
 # - check if no more space available to spawn objects ✔️
@@ -41,7 +43,7 @@ from item import Item
 from particles import Particle, ParticleSystem
 
 # game parameters
-DEBUG = False
+DEBUG = True
 NUM_MAPS = 1
 MAP_HEIGHT = 11
 MAP_WIDTH = 20
@@ -53,6 +55,7 @@ LEVEL_ITEMS = MAX_ITEMS
 TILE_SIZE = 64
 BACKGROUND_COLOR = (200, 200, 200)
 MAX_PARTICLES = 200
+HIGH_SCORE = 0
 
 # create empty map
 labyrinth_array = np.zeros((MAP_HEIGHT, MAP_WIDTH))
@@ -110,6 +113,29 @@ def draw_maze(screen, player, monster):
     labyrinth_group.draw(screen)
     return screen.copy()
 
+def read_highscore():
+    global HIGH_SCORE
+
+    try:
+        f = open("./highscore.txt")
+        line = f.readline()
+        HIGH_SCORE = int(line)
+        f.close()
+    except:
+        HIGH_SCORE = 0
+    print("Highscore", HIGH_SCORE)
+
+def write_highscore(score):
+    global HIGH_SCORE
+    if score > HIGH_SCORE:
+        HIGH_SCORE = score
+        try:
+            f = open("./highscore.txt", "w+")
+            f.write(str(score))
+            f.close()
+        except:
+            print("Unable to write highscore.txt")
+
 # main game loop
 def run():
     global DEBUG
@@ -119,13 +145,13 @@ def run():
     global TILE_SIZE
     global BACKGROUND_COLOR
     global SCORE
+    global HIGH_SCORE
     global MAX_PARTICLES
 
     global labyrinth_array
     global sprites_group
     global item_group
     global labyrinth_group
-
 
     # init pygame and mixer
     pygame.init()
@@ -147,6 +173,10 @@ def run():
     countdown = LEVEL_TIME
     countdown_display = ""
 
+    # read high score
+    read_highscore()
+
+    # load a random map
     NUM_MAPS = count_maps()
     read_map(labyrinth_array, NUM_MAPS)
 
@@ -242,6 +272,7 @@ def run():
                 bomb.hide()
                 labyrinth_background = draw_maze(screen, player, monster)
                 mute_sound = False
+                write_highscore(SCORE)
 
         # check map boundaries
         if player.rect.x/64 < 0 or player.rect.x/64>=MAP_WIDTH or player.rect.y/64 < 0 or player.rect.y/64>=MAP_HEIGHT:
@@ -301,9 +332,10 @@ def run():
         particle_system.draw(screen)
 
         # show the timer
-        game_font_chrono.render_to(screen, (10,15), f"TIME: {countdown_display}", (255,255,0)) 
+        game_font_chrono.render_to(screen, (1070,15), f"TIME: {countdown_display}", (255,255,0)) 
 
-        # show the score
+        # show the score and highscore
+        game_font_chrono.render_to(screen, (10,15), f"HIGH: {HIGH_SCORE}", (255,255,0)) 
         game_font_chrono.render_to(screen, (10,655), f"SCORE: {SCORE}", (255,255,0)) 
 
         # show keys
